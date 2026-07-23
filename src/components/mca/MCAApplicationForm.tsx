@@ -303,7 +303,7 @@ function mapReactStateToSalesforce(
         result[config.Second_Owner_Street__c] = o1.homeStreet || "";
       if (config.Second_Owner_City__c)
         result[config.Second_Owner_City__c] = o1.homeCity || "";
-      //if (config.Second_Owner_State__c) result[config.Second_Owner_State__c] = STATE_TO_CODE[o1.homeState] || "";
+      if (config.Second_Owner_State__c) result[config.Second_Owner_State__c] = STATE_TO_CODE[o1.homeState] || "";
       if (config.Second_Owner_Zip__c)
         result[config.Second_Owner_Zip__c] = o1.homeZip || "";
       if (config.Seecond_Owner_Credit_Score__c)
