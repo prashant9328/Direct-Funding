@@ -70,7 +70,7 @@ function useVisualforceRemoting(): boolean {
   return Boolean(window.Visualforce?.remoting?.Manager);
 }
 
-/** Helper to invoke Visualforce Remoting methods on LoanServiceController */
+/** Helper to invoke Visualforce Remoting methods on DirectFundingServiceController */
 function invokeRemoteAction<T>(action: string, ...params: any[]): Promise<T> {
   return new Promise((resolve, reject) => {
     if (!useVisualforceRemoting()) {
@@ -86,10 +86,10 @@ function invokeRemoteAction<T>(action: string, ...params: any[]): Promise<T> {
       }
     };
     window.Visualforce!.remoting.Manager.invokeAction(
-      `LoanServiceController.${action}`,
+      `DirectFundingServiceController.${action}`,
       ...params,
       callback,
-      { escape: false }
+      { escape: false },
     );
   });
 }
