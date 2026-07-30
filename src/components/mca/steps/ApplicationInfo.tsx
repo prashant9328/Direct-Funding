@@ -92,7 +92,7 @@ const ApplicationInfo = ({ data, onChange, errors }: ApplicationInfoProps) => {
       {/* Quick win badge */}
       <div className="flex items-center gap-2.5 p-3 rounded-xl bg-primary/5 border border-primary/15">
         <Zap className="w-4 h-4 text-primary flex-shrink-0" />
-        <span className="text-xs text-primary font-medium">Pro tip: Complete this step and you're already 20% done!</span>
+        <span className="text-xs text-primary font-medium">Pro tip: Complete this step and you're already 20% done!!</span>
       </div>
 
       {/* Business Information */}

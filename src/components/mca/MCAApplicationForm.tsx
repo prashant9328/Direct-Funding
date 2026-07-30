@@ -246,6 +246,12 @@ function mapReactStateToSalesforce(
     if (config.If_Yes_How_Many__c)
       result[config.If_Yes_How_Many__c] = appData.openLoansCount || "";
 
+    const propertyField =
+      config.Do_You_Own_Any_Investment_Property__c ||
+      "Do_You_Own_Any_Investment_Property__c";
+    const propertyValue = appData.hasProperties?.toLowerCase();
+    result[propertyField] = propertyValue === "yes" || propertyValue === "true";
+
     result.Loan_Application_Stage__c = "Business Information";
   }
 
@@ -303,7 +309,9 @@ function mapReactStateToSalesforce(
         result[config.Second_Owner_Street__c] = o1.homeStreet || "";
       if (config.Second_Owner_City__c)
         result[config.Second_Owner_City__c] = o1.homeCity || "";
-      if (config.Second_Owner_State__c) result[config.Second_Owner_State__c] = STATE_TO_CODE[o1.homeState] || "";
+      if (config.Second_Owner_State__c)
+        result[config.Second_Owner_State__c] =
+          STATE_TO_CODE[o1.homeState] || "";
       if (config.Second_Owner_Zip__c)
         result[config.Second_Owner_Zip__c] = o1.homeZip || "";
       if (config.Seecond_Owner_Credit_Score__c)
@@ -423,7 +431,13 @@ function mapSalesforceToReactState(
   if (config.If_Yes_How_Many__c && sObj[config.If_Yes_How_Many__c])
     appData.openLoansCount = String(sObj[config.If_Yes_How_Many__c]);
 
-  // Do_You_Own_Any_Investment_Property__c  Remaining
+  const propertyField =
+    config.Do_You_Own_Any_Investment_Property__c ||
+    "Do_You_Own_Any_Investment_Property__c";
+  const propertyValue = sObj[propertyField];
+  if (propertyValue !== null && propertyValue !== undefined) {
+    appData.hasProperties = propertyValue ? "yes" : "no";
+  }
 
   const owners: Owner[] = [];
 
@@ -838,6 +852,8 @@ const MCAApplicationForm = () => {
       if (!appData.registrationDate) errs.registrationDate = "Required";
       if (appData.hasOpenLoans === "yes" && !appData.openLoansCount)
         errs.openLoansCount = "Required";
+
+      if (!appData.hasProperties) errs.hasProperties = "Required";
     }
     if (step === 2) {
       owners.forEach((o, i) => {

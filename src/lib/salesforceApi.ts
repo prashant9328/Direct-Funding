@@ -24,6 +24,7 @@ export interface LoanApplicationSettings {
   Business_Registration_Date__c: string;
   Do_You_Have_Any_Open_Business_Loans_MCA__c: string;
   If_Yes_How_Many__c: string;
+  Do_You_Own_Any_Investment_Property__c?: string;
   First_Owner_Street__c: string;
   First_Owner_City__c: string;
   First_Owner_State__c: string;
@@ -78,7 +79,10 @@ function invokeRemoteAction<T>(action: string, ...params: any[]): Promise<T> {
       return;
     }
 
-    const callback = (result: any, event: { status: boolean; message?: string }) => {
+    const callback = (
+      result: any,
+      event: { status: boolean; message?: string },
+    ) => {
       if (event.status) {
         resolve(result as T);
       } else {
@@ -107,7 +111,7 @@ const LOCAL_MOCK_CONFIG: LoanApplicationSettings = {
   Website__c: "Website__c",
   First_Name__c: "FirstName",
   Last_Name__c: "LastName",
-  
+
   Business_Street_Address__c: "Street",
   Business_City__c: "City",
   Business_State__c: "State",
@@ -120,9 +124,12 @@ const LOCAL_MOCK_CONFIG: LoanApplicationSettings = {
   State_Of_Formation__c: "State_Of_Formation__c",
   Federal_Tax_ID__c: "Federal_Tax_ID__c",
   Business_Registration_Date__c: "Business_Registration_Date__c",
-  Do_You_Have_Any_Open_Business_Loans_MCA__c: "Do_You_Have_Any_Open_Business_Loans_MCA__c",
+  Do_You_Have_Any_Open_Business_Loans_MCA__c:
+    "Do_You_Have_Any_Open_Business_Loans_MCA__c",
   If_Yes_How_Many__c: "If_Yes_How_Many__c",
-  
+  Do_You_Own_Any_Investment_Property__c:
+    "Do_You_Own_Any_Investment_Property__c",
+
   First_Owner_Street__c: "First_Owner_Street__c",
   First_Owner_City__c: "First_Owner_City__c",
   First_Owner_State__c: "First_Owner_State__c",
@@ -130,9 +137,10 @@ const LOCAL_MOCK_CONFIG: LoanApplicationSettings = {
   First_Owner_Birth__c: "First_Owner_Birth__c",
   First_Owner_SSN__c: "First_Owner_SSN__c",
   First_Owner_Personal_Credit_Score__c: "First_Owner_Personal_Credit_Score__c",
-  What_percentage_of_ownership_do_you_have__c: "What_percentage_of_ownership_do_you_have__c",
+  What_percentage_of_ownership_do_you_have__c:
+    "What_percentage_of_ownership_do_you_have__c",
   Do_you_own_or_rent_your_home__c: "Do_you_own_or_rent_your_home__c",
-  
+
   Second_Owner_First_Name__c: "Second_Owner_First_Name__c",
   Second_Owner_Last_Name__c: "Second_Owner_Last_Name__c",
   Second_Owner_Email__c: "Second_Owner_Email__c",
@@ -144,7 +152,8 @@ const LOCAL_MOCK_CONFIG: LoanApplicationSettings = {
   Second_Owner_Birth__c: "Second_Owner_Birth__c",
   Second_Owner_SSN__c: "Second_Owner_SSN__c",
   Seecond_Owner_Credit_Score__c: "Seecond_Owner_Credit_Score__c",
-  Second_What_Percentage_Of_Ownership__c: "Second_What_Percentage_Of_Ownership__c",
+  Second_What_Percentage_Of_Ownership__c:
+    "Second_What_Percentage_Of_Ownership__c",
 };
 
 let localRecordData: Record<string, any> = {
@@ -160,26 +169,92 @@ let localRecordData: Record<string, any> = {
   Website__c: "www.acmecorp.com",
   FirstName: "John",
   LastName: "Smith",
+  Do_You_Own_Any_Investment_Property__c: false,
 };
 
 const MOCK_ADDRESSES = [
-  { street: "120 Broadway", city: "New York", state: "New York", stateShort: "NY", zip: "10271" },
-  { street: "1600 Amphitheatre Pkwy", city: "Mountain View", state: "California", stateShort: "CA", zip: "94043" },
-  { street: "1600 Pennsylvania Avenue NW", city: "Washington", state: "District of Columbia", stateShort: "DC", zip: "20500" },
-  { street: "100 Pine St", city: "San Francisco", state: "California", stateShort: "CA", zip: "94111" },
-  { street: "233 S Wacker Dr", city: "Chicago", state: "Illinois", stateShort: "IL", zip: "60606" },
-  { street: "350 5th Ave", city: "New York", state: "New York", stateShort: "NY", zip: "10118" },
-  { street: "700 Bellevue Way NE", city: "Bellevue", state: "Washington", stateShort: "WA", zip: "98004" },
-  { street: "123 Main St", city: "Austin", state: "Texas", stateShort: "TX", zip: "78701" },
-  { street: "456 Elm St", city: "Miami", state: "Florida", stateShort: "FL", zip: "33101" },
-  { street: "789 Oak Ave", city: "Seattle", state: "Washington", stateShort: "WA", zip: "98101" },
+  {
+    street: "120 Broadway",
+    city: "New York",
+    state: "New York",
+    stateShort: "NY",
+    zip: "10271",
+  },
+  {
+    street: "1600 Amphitheatre Pkwy",
+    city: "Mountain View",
+    state: "California",
+    stateShort: "CA",
+    zip: "94043",
+  },
+  {
+    street: "1600 Pennsylvania Avenue NW",
+    city: "Washington",
+    state: "District of Columbia",
+    stateShort: "DC",
+    zip: "20500",
+  },
+  {
+    street: "100 Pine St",
+    city: "San Francisco",
+    state: "California",
+    stateShort: "CA",
+    zip: "94111",
+  },
+  {
+    street: "233 S Wacker Dr",
+    city: "Chicago",
+    state: "Illinois",
+    stateShort: "IL",
+    zip: "60606",
+  },
+  {
+    street: "350 5th Ave",
+    city: "New York",
+    state: "New York",
+    stateShort: "NY",
+    zip: "10118",
+  },
+  {
+    street: "700 Bellevue Way NE",
+    city: "Bellevue",
+    state: "Washington",
+    stateShort: "WA",
+    zip: "98004",
+  },
+  {
+    street: "123 Main St",
+    city: "Austin",
+    state: "Texas",
+    stateShort: "TX",
+    zip: "78701",
+  },
+  {
+    street: "456 Elm St",
+    city: "Miami",
+    state: "Florida",
+    stateShort: "FL",
+    zip: "33101",
+  },
+  {
+    street: "789 Oak Ave",
+    city: "Seattle",
+    state: "Washington",
+    stateShort: "WA",
+    zip: "98101",
+  },
 ];
 
 /** Verifies lead/opportunity exists and retrieves mappings */
-export async function isLeadExist(recordId: string): Promise<LoanApplicationSettings | null> {
+export async function isLeadExist(
+  recordId: string,
+): Promise<LoanApplicationSettings | null> {
   if (useVisualforceRemoting()) {
     try {
-      return await invokeRemoteAction<LoanApplicationSettings>("isLeadExist", recordId);
+      return await invokeRemoteAction<LoanApplicationSettings>(
+        "isLeadExist",
+        recordId,
+      );
     } catch (e) {
       console.error("Salesforce API - isLeadExist failed:", e);
       return null;
@@ -187,7 +262,7 @@ export async function isLeadExist(recordId: string): Promise<LoanApplicationSett
   }
 
   // Local fallback
-  console.log('Visual force remoting Status :',useVisualforceRemoting);
+  console.log("Visual force remoting Status :", useVisualforceRemoting);
   console.log("Local API -   configuration retrieved");
   await new Promise((resolve) => setTimeout(resolve, 300));
   return LOCAL_MOCK_CONFIG;
@@ -237,7 +312,10 @@ export async function setDataForLead(payloadJson: string): Promise<void> {
   try {
     const data = JSON.parse(payloadJson);
     localRecordData = { ...localRecordData, ...data };
-    console.log("Local API - setDataForLead updated in-memory data:", localRecordData);
+    console.log(
+      "Local API - setDataForLead updated in-memory data:",
+      localRecordData,
+    );
   } catch (e) {
     console.error("Local API - Failed to parse payload JSON:", e);
   }
@@ -245,10 +323,20 @@ export async function setDataForLead(payloadJson: string): Promise<void> {
 }
 
 /** Logs current state to the Apex Tracker object */
-export async function updateApexTracker(payloadJson: string, stageValue: string): Promise<void> {
-  console.log(`updateApexTracker called for stage "${stageValue}" with JSON:`, payloadJson);
+export async function updateApexTracker(
+  payloadJson: string,
+  stageValue: string,
+): Promise<void> {
+  console.log(
+    `updateApexTracker called for stage "${stageValue}" with JSON:`,
+    payloadJson,
+  );
   if (useVisualforceRemoting()) {
-    return invokeRemoteAction<void>("updateApexTracker", payloadJson, stageValue);
+    return invokeRemoteAction<void>(
+      "updateApexTracker",
+      payloadJson,
+      stageValue,
+    );
   }
 
   console.log(`Local API - updateApexTracker saved for stage: ${stageValue}`);
@@ -256,14 +344,23 @@ export async function updateApexTracker(payloadJson: string, stageValue: string)
 }
 
 /** Uploads bank statements in base64 format and links them to the Lead/Opportunity */
-export async function uploadFiles(baseStr: string, filename: string, recordId: string): Promise<boolean> {
+export async function uploadFiles(
+  baseStr: string,
+  filename: string,
+  recordId: string,
+): Promise<boolean> {
   console.log(`uploadFiles called for record ${recordId}:`, {
     filename,
     base64Size: `${(baseStr.length / 1024 / 1024).toFixed(2)} MB`,
   });
 
   if (useVisualforceRemoting()) {
-    return invokeRemoteAction<boolean>("uploadFiles", baseStr, filename, recordId);
+    return invokeRemoteAction<boolean>(
+      "uploadFiles",
+      baseStr,
+      filename,
+      recordId,
+    );
   }
 
   // Local fallback
@@ -285,7 +382,9 @@ export async function getFundedAction(recordId: string): Promise<boolean> {
 }
 
 /** Transitions status to finished and returns Lead Owner/User details */
-export async function getOwnerInfo(recordId: string): Promise<UserOwnerInfo | null> {
+export async function getOwnerInfo(
+  recordId: string,
+): Promise<UserOwnerInfo | null> {
   console.log(`getOwnerInfo called for record: ${recordId}`);
   if (useVisualforceRemoting()) {
     return invokeRemoteAction<UserOwnerInfo>("getOwnerInfo", recordId);
@@ -306,9 +405,14 @@ export async function getOwnerInfo(recordId: string): Promise<UserOwnerInfo | nu
 export async function isLoanApplicationEmailVerificationRequired(): Promise<boolean> {
   if (useVisualforceRemoting()) {
     try {
-      return await invokeRemoteAction<boolean>("isLoanApplicationEmailVerificationRequired");
+      return await invokeRemoteAction<boolean>(
+        "isLoanApplicationEmailVerificationRequired",
+      );
     } catch (e) {
-      console.error("Salesforce API - isLoanApplicationEmailVerificationRequired failed:", e);
+      console.error(
+        "Salesforce API - isLoanApplicationEmailVerificationRequired failed:",
+        e,
+      );
       return false;
     }
   }
@@ -325,7 +429,9 @@ export async function getStageFromRecord(recordId: string): Promise<string> {
   }
 
   // Local fallback
-  console.log("Local API - getStageFromRecord retrieved current stage: Application Information");
+  console.log(
+    "Local API - getStageFromRecord retrieved current stage: Application Information",
+  );
   return "Application Information";
 }
 
@@ -333,9 +439,13 @@ export async function getStageFromRecord(recordId: string): Promise<string> {
 export async function fetchPlaces(
   input: string,
   type: "autocomplete" | "details",
-  placeId?: string
+  placeId?: string,
 ): Promise<{ success: boolean; data: any; error: string | null }> {
-  console.log("Local API Address Search - fetchPlaces:", { input, type, placeId });
+  console.log("Local API Address Search - fetchPlaces:", {
+    input,
+    type,
+    placeId,
+  });
 
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 200));
@@ -347,7 +457,7 @@ export async function fetchPlaces(
         addr.street.toLowerCase().includes(s) ||
         addr.city.toLowerCase().includes(s) ||
         addr.state.toLowerCase().includes(s) ||
-        addr.zip.includes(s)
+        addr.zip.includes(s),
     );
 
     const predictions = filtered.map((addr, idx) => ({
@@ -362,7 +472,11 @@ export async function fetchPlaces(
     };
   } else if (type === "details") {
     if (!placeId) {
-      return { success: false, data: null, error: "placeId is required for details query" };
+      return {
+        success: false,
+        data: null,
+        error: "placeId is required for details query",
+      };
     }
     const idx = parseInt(placeId.replace("mock-place-", ""), 10);
     const match = MOCK_ADDRESSES[idx];
